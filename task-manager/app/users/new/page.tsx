@@ -2,7 +2,7 @@ import React from 'react'
 
 const page = () => {
     return (
-        <div>New Users</div>
+        <div>make this a New Users button</div>
     )
 }
 export default page
