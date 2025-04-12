@@ -2,7 +2,7 @@ import React from 'react'
 
 const Users = () => {
     return (
-        <h1>make a new user</h1>
+        <div>Users</div>
     )
 }
 export default Users
