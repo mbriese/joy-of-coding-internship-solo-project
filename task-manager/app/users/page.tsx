@@ -2,7 +2,7 @@ import React from 'react'
 
 const Users = () => {
     return (
-        <div>Users</div>
+        <div>Authorized Users</div>
     )
 }
 export default Users
