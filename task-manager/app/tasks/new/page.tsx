@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Page = () => {
+const NewTasksPage = () => {
     return (
         <div>Create new tasks</div>
     )
 }
-export default Page
+export default NewTasksPage
