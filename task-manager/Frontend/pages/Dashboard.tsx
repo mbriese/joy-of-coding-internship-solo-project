@@ -1,21 +1,20 @@
-'use client';
+"use client";
 import React from 'react'
+
 import Link from "next/link";
-import { FaListUl } from "react-icons/fa6";
-import {usePathname} from "next/navigation";
 import classnames from "classnames";
+import {usePathname} from "next/navigation";
 
 
-const NavBar = () => {
+const Dashboard = () => {
     const currentPath = usePathname();
-
     const links = [
-        {label: 'Dashboard', href: '/'},
-        {label: 'Users', href: '/users'},
+        {label: 'Add a Task', href: '/'},
+        {label: 'Add a User', href: '/users'},
         {label: 'Tasks', href: '/tasks'}];
     return (
-        <nav className='flex space-x-6 border-b mb-5 px-5 h-15 items-center'>
-            <Link href="/"><FaListUl /></Link>
+        <>
+            <header>This is the dashboard</header>
             <ul className='flex space-x-6'>
                 {links.map(link=>
                     <Link
@@ -27,7 +26,7 @@ const NavBar = () => {
                         })}
                         href={link.href}>{link.label}</Link>)}
             </ul>
-        </nav>
+        </>
     )
 }
-export default NavBar
+export default Dashboard

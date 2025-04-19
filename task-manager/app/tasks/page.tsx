@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Page = () => {
+const TasksPage = () => {
     return (
         <div>List of Tasks</div>
     )
 }
-export default Page
+export default TasksPage
