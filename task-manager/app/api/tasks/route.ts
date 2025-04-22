@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {PrismaClient} from '@prisma/client';
-import {createIssueSchema} from "@/app/validationSchemas";
+import {createTaskSchema} from "@/app/validationSchemas";
 /*
  updated to include updatedAt and createdAt fields
  Postman request test: double quotes around title and description fields "title":"title" "description":"description"
@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
-    const validation = createIssueSchema.safeParse(body);
+    const validation = createTaskSchema.safeParse(body);
     if (!validation.success) {
         return NextResponse.json(validation.error.format(), {status: 400});
     }
