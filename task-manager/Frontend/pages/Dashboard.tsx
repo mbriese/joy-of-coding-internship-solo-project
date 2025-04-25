@@ -10,22 +10,21 @@ const Dashboard = () => {
     const links = [
         {label: 'Add a Task', href: '/tasks/new'},
         {label: 'Add a User', href: '/users/new'},
-        {label: 'Tasks', href: '/tasks'}];
-    return (
-        <>
-            <header>Welcome to your personal task manager!</header>
-            <ul className='flex space-x-6'>
-                {links.map(link=>
-                    <Link
-                        key={link.href}
-                        className={classnames({
-                            'text-zinc-900': link.href === currentPath,
-                            'text-zinc-500': link.href !== currentPath,
-                            'hover:text-zinc-800 transition-colors': true,
-                        })}
-                        href={link.href}>{link.label}</Link>)}
-            </ul>
-        </>
-    )
+        {label: 'My Completed Tasks List', href: '/tasks'}];
+    // @ts-ignore
+    return <>
+        <header>Welcome to your personal task manager!</header>
+        <ul className='flex space-x-6'>
+            {links.map(link=>
+                <Link
+                    key={link.href}
+                    className={classnames({
+                        'text-zinc-900': link.href === currentPath,
+                        'text-zinc-500': link.href !== currentPath,
+                        'hover:text-zinc-800 transition-colors': true,
+                    })}
+                    href={link.href}>{link.label}</Link>)}
+        </ul>
+    </>
 }
 export default Dashboard

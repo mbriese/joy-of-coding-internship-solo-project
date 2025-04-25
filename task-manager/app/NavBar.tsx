@@ -11,8 +11,8 @@ const NavBar = () => {
 
     const links = [
         {label: 'Dashboard', href: '/'},
-        {label: 'Users', href: '/users'},
-        {label: 'Tasks', href: '/tasks'}];
+        {label: 'Tasks', href: '/tasks'},
+        {label: 'Users', href: '/users'}];
     return (
         <nav className='flex space-x-6 border-b mb-5 px-5 h-15 items-center'>
             <Link href="/"><FaListUl /></Link>
@@ -27,6 +27,7 @@ const NavBar = () => {
                         })}
                         href={link.href}>{link.label}</Link>)}
             </ul>
+
         </nav>
     )
 }
