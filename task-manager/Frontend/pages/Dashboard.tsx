@@ -8,12 +8,12 @@ import {usePathname} from "next/navigation";
 const Dashboard = () => {
     const currentPath = usePathname();
     const links = [
-        {label: 'Add a Task', href: '/'},
-        {label: 'Add a User', href: '/users'},
+        {label: 'Add a Task', href: '/tasks/new'},
+        {label: 'Add a User', href: '/users/new'},
         {label: 'Tasks', href: '/tasks'}];
     return (
         <>
-            <header>This is the dashboard</header>
+            <header>Welcome to your personal task manager!</header>
             <ul className='flex space-x-6'>
                 {links.map(link=>
                     <Link

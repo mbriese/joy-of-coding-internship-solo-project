@@ -26,8 +26,8 @@ const NewTasksPage = () => {
     const onSubmit =handleSubmit(async (data) => {
         try {
             setSubmitting(true);
-            await axios.post('/api/issues', data);
-            router.push('/issues');
+            await axios.post('/api/tasks', data);
+            router.push('/tasks');
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             setSubmitting(false);
@@ -62,7 +62,7 @@ const NewTasksPage = () => {
 
                 <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
-                <Button disabled={isSubmitting}>Submit New Issue{isSubmitting && <Spinner/>}</Button>
+                <Button disabled={isSubmitting}>Submit New Task{isSubmitting && <Spinner/>}</Button>
             </form>
         </div>
     )
