@@ -1,8 +1,13 @@
-import React from 'react'
+'use client'
 
-const Users = () => {
+import { Button } from '@radix-ui/themes';
+import Link from 'next/link';
+
+
+const UserPage = () => {
     return (
-        <div>Authorized Users</div>
+        <div><Button><Link href='/users/new'>New User</Link></Button></div>
     )
 }
-export default Users
+export default UserPage
+
