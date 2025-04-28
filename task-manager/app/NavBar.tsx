@@ -11,8 +11,8 @@ const NavBar = () => {
 
     const links = [
         {label: 'Dashboard', href: '/'},
-        {label: 'Tasks', href: '/tasks'},
-        {label: 'Users', href: '/users'}];
+        {label: 'tasks', href: '/tasks'},
+        {label: 'users', href: '/users'}];
     return (
         <nav className='flex space-x-6 border-b mb-5 px-5 h-15 items-center'>
             <Link href="/"><FaListUl /></Link>
