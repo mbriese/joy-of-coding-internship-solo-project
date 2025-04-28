@@ -13,11 +13,11 @@ import {z} from 'zod';
 import ErrorMessage from "@/app/Components/ErrorMessage";
 import Spinner from "@/app/Components/Spinner";
 
-type IssueForm = z.infer<typeof createTaskSchema>;
+type TaskForm = z.infer<typeof createTaskSchema>;
 
 const NewTasksPage = () => {
     const router = useRouter();
-    const {register, control, handleSubmit, formState: {errors}} = useForm<IssueForm>({
+    const {register, control, handleSubmit, formState: {errors}} = useForm<TaskForm>({
         resolver: zodResolver(createTaskSchema),
     });
     const [error, setError] = useState('');
