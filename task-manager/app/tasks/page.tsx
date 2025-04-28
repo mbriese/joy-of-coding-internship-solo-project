@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const TasksPage = () => {
     return (
-        <div><Button className={`px-3 text-sm py-2 rounded-md cursor-pointer bg-white text-black `}>
+        <div><Button size="2" variant="soft">
             <Link className='text-center text-black border-4' href='/tasks/new'>New Task</Link>
         </Button></div>
     )

@@ -3,7 +3,6 @@ import React from 'react';
 import Link from "next/link";
 import classnames from "classnames";
 import {usePathname} from "next/navigation";
-import {Button} from "@radix-ui/themes";
 
 
 const Dashboard = () => {
@@ -17,7 +16,6 @@ const Dashboard = () => {
         <header>Welcome to your personal task manager!</header>
         <ul className='flex space-x-6'>
             {links.map(link=>
-
                 <Link
                     key={link.href}
                     className={classnames({
@@ -25,6 +23,7 @@ const Dashboard = () => {
                         'text-zinc-500': link.href !== currentPath,
                         'hover:text-zinc-800 transition-colors': true,
                     })}
+
                     href={link.href}>{link.label}</Link>)}
 
         </ul>

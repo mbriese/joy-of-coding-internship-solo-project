@@ -11,7 +11,13 @@ const UserPage = async () => {
     // const users = await res.json();
     return (
         <>
-            <div><Button><Link href='/users/new'>New User</Link></Button></div>
+            <div>
+                <Button size="2" variant="soft">
+                    <Link className='text-center text-black border-4' href='/users/new'>
+                        New User
+                    </Link>
+                </Button>
+            </div>
             <ul>
                 this is the user page.
              </ul>
