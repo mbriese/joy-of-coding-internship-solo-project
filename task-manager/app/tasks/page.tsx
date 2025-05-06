@@ -1,14 +1,15 @@
 'use client'
-
+import React from 'react';
 import { Button } from '@radix-ui/themes';
 import Link from 'next/link';
+import Spinner from "@/app/Components/Spinner";
 
 
-const TasksPage = () => {
+const NewTasksPage = () => {
     return (
-        <div><Button size="2" variant="soft">
-            <Link className='text-center text-black border-4' href='/tasks/new'>New Task</Link>
+        <div><Button>
+            <Link href='/tasks/new'>New Task</Link>
         </Button></div>
     )
 }
-export default TasksPage
+export default NewTasksPage
