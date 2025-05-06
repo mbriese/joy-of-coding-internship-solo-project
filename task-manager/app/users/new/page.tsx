@@ -1,10 +1,8 @@
 'use client';
 import {Button, Callout, TextField} from "@radix-ui/themes"
-import SimpleMDE from "react-simplemde-editor";
 
-import {useForm, Controller} from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 import axios from 'axios';
-import "easymde/dist/easymde.min.css";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -17,7 +15,7 @@ type UserForm = z.infer<typeof createUserSchema>;
 
 const NewUserPage = () => {
     const router = useRouter();
-    const {register, control, handleSubmit, formState: {errors}} = useForm<UserForm>({
+    const {register, handleSubmit, formState: {errors}} = useForm<UserForm>({
         resolver: zodResolver(createUserSchema),
     });
     const [error, setError] = useState('');
@@ -52,13 +50,11 @@ const NewUserPage = () => {
                 </TextField.Root>
 
                 <ErrorMessage>{errors.name?.message}</ErrorMessage>
+                <TextField.Root placeholder="email" {...register("email")}>
+                    <TextField.Slot>
+                    </TextField.Slot>
+                </TextField.Root>
 
-                <Controller
-                    name="email"
-                    control={control}
-                    render={({field}) =>
-                        <SimpleMDE placeholder="email" {...field}/>}
-                />
 
                 <ErrorMessage>{errors.email?.message}</ErrorMessage>
 
