@@ -7,15 +7,15 @@ import {createTaskSchema} from "@/app/validationSchemas";
 //const DEFAULT_USER_ID = 1;
 export async function GET() {
     try {
-        // @ts-ignore
-        // @ts-ignore
-        // @ts-ignore
         const tasks = await prisma.task.findMany({
             where: { userID: 1 },
+            orderBy: { dueDate: 'asc' },
         });
+
         return NextResponse.json(tasks);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch tasks' }, { status: 500 });
+    } catch (err) {
+        console.error('Fetch error:', err);
+        return NextResponse.json({ error: 'Error fetching tasks' }, { status: 500 });
     }
 }
 
