@@ -3,7 +3,7 @@ import {PrismaClient} from "../../generated/prisma/client"
 import {createTaskSchema} from "@/app/validationSchemas"
 
 const prisma = new PrismaClient()
-
+const DEFAULT_USER_ID = 1;
 export async function POST (request: NextRequest) {
     console.log('in task post function');
     const body = await request.json();

@@ -13,20 +13,26 @@ const Dashboard = () => {
         {label: 'My Completed tasks List', href: '/tasks'}];
     // @ts-ignore
     return <>
-        <header>Welcome to your personal task manager!</header>
-        <ul className='flex space-x-6'>
-            {links.map(link=>
-                <Link
-                    key={link.href}
-                    className={classnames({
-                        'text-zinc-900': link.href === currentPath,
-                        'text-zinc-500': link.href !== currentPath,
-                        'hover:text-zinc-800 transition-colors': true,
-                    })}
-
-                    href={link.href}>{link.label}</Link>)}
-
+        <h1 className='text-2xl'>Welcome to your personal task manager!</h1>
+        <ul className="flex space-x-6">
+            {links.map(link => (
+                <li key={link.href}>
+                    <Link
+                        href={link.href}
+                        className={classnames(
+                            'px-4 py-2 rounded-md font-semibold transition-colors shadow-sm',
+                            {
+                                'bg-blue-600 text-white hover:bg-blue-700': link.href === currentPath,
+                                'bg-zinc-100 text-zinc-700 hover:bg-zinc-200': link.href !== currentPath,
+                            }
+                        )}
+                    >
+                        {link.label}
+                    </Link>
+                </li>
+            ))}
         </ul>
+
     </>
 }
 export default Dashboard
