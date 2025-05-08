@@ -4,14 +4,14 @@ import { prisma } from "../../lib/prisma";
 import {createTaskSchema} from "@/app/validationSchemas";
 
 //const prisma = new PrismaClient()
-const DEFAULT_USER_ID = '1';
+//const DEFAULT_USER_ID = 1;
 export async function GET() {
     try {
         // @ts-ignore
         // @ts-ignore
         // @ts-ignore
         const tasks = await prisma.task.findMany({
-            where: { userId: DEFAULT_USER_ID },
+            where: { userID: 1 },
         });
         return NextResponse.json(tasks);
     } catch (error) {
