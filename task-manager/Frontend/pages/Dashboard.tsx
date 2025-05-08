@@ -8,13 +8,13 @@ import {usePathname} from "next/navigation";
 const Dashboard = () => {
     const currentPath = usePathname();
     const links = [
-        {label: 'Add a Task', href: '/tasks/new'},
-        {label: 'Add a User', href: '/users/new'},
-        {label: 'My Completed tasks List', href: '/tasks'}];
+        {label: 'Add Task', href: '/tasks/new'},
+        {label: 'Add User', href: '/users/new'},
+        {label: 'All Tasks', href: '/tasks'}];
     // @ts-ignore
     return <>
-        <div className="col-start-3 row-start-3 flex max-w-lg flex-col space-y-6 font-bold
-         bg-gray-100 p-2 dark:bg-white/10">Welcome to your personal task manager!</div>
+        <div className="p-6 col-start-3 row-start-2 flex max-w-lg flex-col space-y-6 font-bold
+         p-2 dark:bg-white/10">Welcome to your personal task manager!</div>
         <ul className="flex -top-px -bot space-x-6">
             {links.map(link => (
                 <li key={link.href}>

@@ -1,9 +1,25 @@
 import {NextRequest, NextResponse} from "next/server";
-import {PrismaClient} from "../../generated/prisma/client"
-import {createTaskSchema} from "@/app/validationSchemas"
+import { prisma } from "../../lib/prisma";
+//import {PrismaClient} from "../../generated/prisma/client";
+import {createTaskSchema} from "@/app/validationSchemas";
 
-const prisma = new PrismaClient()
-const DEFAULT_USER_ID = 1;
+//const prisma = new PrismaClient()
+const DEFAULT_USER_ID = '1';
+export async function GET() {
+    try {
+        // @ts-ignore
+        // @ts-ignore
+        // @ts-ignore
+        const tasks = await prisma.task.findMany({
+            where: { userId: DEFAULT_USER_ID },
+        });
+        return NextResponse.json(tasks);
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to fetch tasks' }, { status: 500 });
+    }
+}
+
+
 export async function POST (request: NextRequest) {
     console.log('in task post function');
     const body = await request.json();
