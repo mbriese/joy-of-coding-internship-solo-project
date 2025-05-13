@@ -1,21 +1,56 @@
-import React from 'react';
-import { Button } from '@radix-ui/themes';
+'use client';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { Button, Card } from '@radix-ui/themes';
 
-// interface User {
-//     id: number;
-//     name: string;
-// }
-const UserPage = async () => {
-    // const res = await fetch('data.url');
-    // const users = await res.json();
+type User = {
+    id: number;
+    name: string;
+    email: string;
+};
+
+const UsersPage = () => {
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const res = await fetch('/api/users');
+            const data = await res.json();
+            setUsers(data);
+            setLoading(false);
+        };
+
+        void fetchUsers(); // 👈 avoids "ignored promise" warning
+    }, []);
+
     return (
-            <div>
-                <div><Button>
-                    <Link href='/users/new'>New User</Link>
-                </Button></div>
+        <div className="max-w-3xl mx-auto py-8 space-y-6">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold">Users</h1>
+                <Button asChild>
+                    <Link href="/users/new">New User</Link>
+                </Button>
             </div>
-    )
-}
-export default UserPage
+
+            {loading && <p>Loading users...</p>}
+
+            {!loading && users.length === 0 && (
+                <p className="text-gray-600">No users found. Try adding one!</p>
+            )}
+
+            <div className="space-y-4">
+                {users.map((user) => (
+                    <Card key={user.id} className="p-4">
+                        <div className="text-lg font-medium">{user.name}</div>
+                        <div className="text-gray-600">{user.email}</div>
+                    </Card>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default UsersPage;
+
 

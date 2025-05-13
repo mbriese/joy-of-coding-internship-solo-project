@@ -1,5 +1,6 @@
 'use client';
 
+
 import { Button, Callout, TextField } from '@radix-ui/themes';
 import SimpleMDE from 'react-simplemde-editor';
 import { Controller, useForm } from 'react-hook-form';
@@ -7,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createTaskSchema } from '@/app/validationSchemas';
 import { z } from 'zod';
 import { useState } from 'react';
+import { Status, CategoryType, Priority, Importance } from '@/app/generated/prisma/client';
 import ErrorMessage from '@/app/Components/ErrorMessage';
 import Spinner from '@/app/Components/Spinner';
 
@@ -29,11 +31,11 @@ const TaskForm = ({
     const {
         title = '',
         description = '',
-        status = 'OPEN',
-        category = '',
+        status = undefined,
+        category = undefined,
         dueDate = '',
-        priority = 'NORMAL',
-        importance = 'NORMAL',
+        priority = undefined,
+        importance = undefined,
         completed = false,
     } = initialValues;
 
@@ -77,13 +79,21 @@ const TaskForm = ({
 
                 <label>Status</label>
                 <select {...register('status')}>
-                    <option value="OPEN">Open</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="DONE">Done</option>
+                    <option value="">-- Choose status --</option>
+                    {Object.values(Status).map((value) => (
+                        <option key={value} value={value}>{value}</option>
+                    ))}
                 </select>
                 <ErrorMessage>{errors.status?.message}</ErrorMessage>
 
                 <TextField.Root placeholder="Category" {...register('category')} />
+                <label>Category</label>
+                <select {...register('category')}>
+                    <option value="">-- Choose a category --</option>
+                    {Object.values(CategoryType).map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                </select>
                 <ErrorMessage>{errors.category?.message}</ErrorMessage>
 
                 <label>Due Date</label>
@@ -92,19 +102,23 @@ const TaskForm = ({
 
                 <label>Priority</label>
                 <select {...register('priority')}>
-                    <option value="LOW">Low</option>
-                    <option value="NORMAL">Normal</option>
-                    <option value="HIGH">High</option>
+                    <option value="">-- Choose priority --</option>
+                    {Object.values(Priority).map((value) => (
+                        <option key={value} value={value}>{value}</option>
+                    ))}
                 </select>
                 <ErrorMessage>{errors.priority?.message}</ErrorMessage>
 
+
                 <label>Importance</label>
                 <select {...register('importance')}>
-                    <option value="LOW">Low</option>
-                    <option value="NORMAL">Normal</option>
-                    <option value="HIGH">High</option>
+                    <option value="">-- Choose importance --</option>
+                    {Object.values(Importance).map((value) => (
+                        <option key={value} value={value}>{value}</option>
+                    ))}
                 </select>
                 <ErrorMessage>{errors.importance?.message}</ErrorMessage>
+
 
                 <label className="flex items-center space-x-2">
                     <input type="checkbox" {...register('completed')} />

@@ -10,6 +10,15 @@ const createUserSchema = z.object({
     details: z.string().min(1).max(255),
 })
 
+export async function GET(req: NextRequest) {
+    try {
+        const users = await prisma.user.findMany();
+        return NextResponse.json(users);
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    }
+}
+
 export async function POST (request: NextRequest) {
     const body = await request.json();
     console.log(JSON.stringify(body));
