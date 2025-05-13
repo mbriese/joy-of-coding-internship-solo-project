@@ -21,13 +21,15 @@ type TaskFormProps = {
     error?: string;
 };
 
+
+
 const TaskForm = ({
                       initialValues = {},
                       onSubmit,
                       isSubmitting = false,
                       error,
                   }: TaskFormProps) => {
-    // ✅ Destructure initial values with fallbacks
+    const [isSuccess, setSuccess] = useState(false);
     const {
         title = '',
         description = '',
@@ -43,6 +45,7 @@ const TaskForm = ({
         register,
         control,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm<TaskFormData>({
         resolver: zodResolver(createTaskSchema),
@@ -58,6 +61,14 @@ const TaskForm = ({
         },
     });
 
+    const handleInternalSubmit = handleSubmit(async (data) => {
+        setSuccess(false);
+        await onSubmit(data);  // calls the parent-provided function
+        reset();               // ✅ clears the form
+        setSuccess(true);      // ✅ shows success message
+    });
+
+
     return (
         <div className="max-w-xl space-y-5">
             {error && (
@@ -65,9 +76,15 @@ const TaskForm = ({
                     <Callout.Text>{error}</Callout.Text>
                 </Callout.Root>
             )}
+            {isSuccess && (
+                <Callout.Root color="green">
+                    <Callout.Text>✅ Task submitted successfully!</Callout.Text>
+                </Callout.Root>
+            )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <TextField.Root placeholder="Title" {...register('title')} />
+
+            <form onSubmit={handleInternalSubmit} className="space-y-4">
+            <TextField.Root placeholder="Title" {...register('title')} />
                 <ErrorMessage>{errors.title?.message}</ErrorMessage>
 
                 <Controller
@@ -128,6 +145,17 @@ const TaskForm = ({
 
                 <Button disabled={isSubmitting}>
                     Submit Task {isSubmitting && <Spinner />}
+                </Button>
+                <Button
+                    type="button"
+                    variant="outline"
+                    color="gray"
+                    onClick={() => {
+                        reset();         // ✅ clears the form
+                        setSuccess(false); // ✅ clears success state too, if needed
+                    }}
+                >
+                    Cancel
                 </Button>
             </form>
         </div>
