@@ -1,13 +1,22 @@
 import {z} from "zod";
+import { Status, Priority, Importance, CategoryType } from '@/app/generated/prisma/client';
+
 
 export const createTaskSchema = z.object({
     title: z.string().min(1, 'Title is required').max(255),
     description: z.string().min(1, 'Description is required'),
-    status: z.enum(['OPEN', 'IN_PROGRESS', 'DONE']),
-    category: z.string().min(1, 'Category is required'),
+    status: z.nativeEnum(Status),
+    category: z.nativeEnum(CategoryType, {
+        errorMap: (issue, ctx) => {
+            if (issue.code === 'invalid_type' || issue.code === 'invalid_enum_value') {
+                return { message: 'Category is required' };
+            }
+            return { message: ctx.defaultError };
+        },
+    }),
     dueDate: z.string().optional(), // 👈 input is string from <input type="date" />
-    priority: z.enum(['LOW', 'NORMAL', 'HIGH']),
-    importance: z.enum(['LOW', 'NORMAL', 'HIGH']),
+    priority: z.nativeEnum(Priority),
+    importance: z.nativeEnum(Importance),
     completed: z.boolean(),
 });
 
