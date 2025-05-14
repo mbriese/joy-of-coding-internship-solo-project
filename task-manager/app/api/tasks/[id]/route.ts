@@ -6,7 +6,7 @@ import { createTaskSchema } from '@/app/validationSchemas';
 
 
 // GET /api/tasks/[id]
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
     const taskId = parseInt(params.id);
     if (isNaN(taskId)) {
         return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
@@ -19,6 +19,25 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json(task);
 }
+
+export async function DELETE(
+    _req: NextRequest,
+    context: { params: { id: string } }
+) {
+    const { id } = context.params;
+
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId)) {
+        return NextResponse.json({ error: 'Invalid task ID' }, { status: 400 });
+    }
+
+    await prisma.task.delete({
+        where: { id: numericId },
+    });
+
+    return NextResponse.json({ success: true });
+}
+
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     const taskId = parseInt(params.id);

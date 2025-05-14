@@ -2,7 +2,9 @@
 
 
 import { Button, Callout, TextField } from '@radix-ui/themes';
-import SimpleMDE from 'react-simplemde-editor';
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
+import {useRouter} from "next/navigation";
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createTaskSchema } from '@/app/validationSchemas';
@@ -11,6 +13,7 @@ import { useState } from 'react';
 import { Status, CategoryType, Priority, Importance } from '@/app/generated/prisma/client';
 import ErrorMessage from '@/app/Components/ErrorMessage';
 import Spinner from '@/app/Components/Spinner';
+import confetti from 'canvas-confetti';
 
 export type TaskFormData = z.infer<typeof createTaskSchema>;
 
@@ -21,13 +24,16 @@ type TaskFormProps = {
     error?: string;
 };
 
+
+
 const TaskForm = ({
                       initialValues = {},
                       onSubmit,
                       isSubmitting = false,
                       error,
                   }: TaskFormProps) => {
-    // ✅ Destructure initial values with fallbacks
+    const [isSuccess, setSuccess] = useState(false)
+    const router = useRouter();
     const {
         title = '',
         description = '',
@@ -43,6 +49,7 @@ const TaskForm = ({
         register,
         control,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm<TaskFormData>({
         resolver: zodResolver(createTaskSchema),
@@ -58,6 +65,18 @@ const TaskForm = ({
         },
     });
 
+    const handleInternalSubmit = handleSubmit(async (data) => {
+        setSuccess(false);
+        void onSubmit(data);  // calls the parent-provided function
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
+        router.push('/tasks');
+    });
+
+
     return (
         <div className="max-w-xl space-y-5">
             {error && (
@@ -65,9 +84,15 @@ const TaskForm = ({
                     <Callout.Text>{error}</Callout.Text>
                 </Callout.Root>
             )}
+            {isSuccess && (
+                <Callout.Root color="green">
+                    <Callout.Text>✅ Task submitted successfully!</Callout.Text>
+                </Callout.Root>
+            )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <TextField.Root placeholder="Title" {...register('title')} />
+
+            <form onSubmit={handleInternalSubmit} className="space-y-4">
+            <TextField.Root placeholder="Title" {...register('title')} />
                 <ErrorMessage>{errors.title?.message}</ErrorMessage>
 
                 <Controller
@@ -128,6 +153,17 @@ const TaskForm = ({
 
                 <Button disabled={isSubmitting}>
                     Submit Task {isSubmitting && <Spinner />}
+                </Button>
+                <Button
+                    type="button"
+                    variant="outline"
+                    color="gray"
+                    onClick={() => {
+                        reset(initialValues);         // ✅ resets initial values
+                        setSuccess(false); // ✅ clears success state too, if needed
+                    }}
+                >
+                    Cancel
                 </Button>
             </form>
         </div>

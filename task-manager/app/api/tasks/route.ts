@@ -7,11 +7,7 @@ import {createTaskSchema} from "@/app/validationSchemas";
 //const DEFAULT_USER_ID = 1;
 export async function GET() {
     try {
-        const tasks = await prisma.task.findMany({
-            where: { userID: 1 },
-            orderBy: { dueDate: 'asc' },
-        });
-
+        const tasks = await prisma.task.findMany();
         return NextResponse.json(tasks);
     } catch (err) {
         console.error('Fetch error:', err);

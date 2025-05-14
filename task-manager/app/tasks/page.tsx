@@ -1,23 +1,31 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-
+import type { task as PrismaTask } from '@/app/generated/prisma/client';
 import {Button } from '@radix-ui/themes';
 import Link from "next/link";
 
-type Task = {
-    id: number;
-    title: string;
-    description?: string;
-    priority: string;
-    dueDate: string;
-    completed: boolean;
-    category?: string; // assuming this is optional in your schema
-};
+import { useRouter } from 'next/navigation';
+import TaskCard from '@/app/Components/tasks/TaskCard';
+//import type { task as TaskModel } from '@/app/generated/prisma/client';
+
+
+// type Task = {
+//     id: number;
+//     title: string;
+//     description?: string;
+//     status: string;
+//     priority: string;
+//     importance: string;
+//     dueDate: Date;
+//     completed: boolean;
+//     category: string;
+// };
 
 const TasksPage = () => {
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState<PrismaTask[]>([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         void (async function fetchTasks() {
@@ -32,6 +40,17 @@ const TasksPage = () => {
             }
         })();
     }, []);
+
+    const handleDelete = async (id: number) => {
+        if (!confirm('Are you sure you want to delete this task?')) return;
+        await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        router.refresh(); // ✅ revalidate data
+    };
+
+    const handleComplete = async (id: number) => {
+        await fetch(`/api/tasks/${id}/complete`, { method: 'PATCH' });
+        router.refresh();
+    };
 
     return (
         <div className="p-6 space-y-6">
@@ -49,25 +68,17 @@ const TasksPage = () => {
                 ) : tasks.length === 0 ? (
                     <p>No tasks found.</p>
                 ) : (
-                    <ul className="space-y-4">
+                    <div className="space-y-4">
                         {tasks.map((task) => (
-                            <li
+                            <TaskCard
                                 key={task.id}
-                                className={`border p-4 rounded-md ${
-                                    task.completed ? 'bg-green-100' : 'bg-white'
-                                }`}
-                            >
-                                <div className="flex justify-between items-center">
-                                    <h2 className="font-semibold">{task.title}</h2>
-                                    <span className="text-sm text-gray-500">{task.priority}</span>
-                                </div>
-                                <p className="text-sm text-gray-600">{task.description}</p>
-                                <p className="text-xs text-gray-400">
-                                    Due: {new Date(task.dueDate).toLocaleDateString()}
-                                </p>
-                            </li>
+                                task={task}
+                                onDelete={handleDelete}
+                                onComplete={handleComplete}
+                            />
                         ))}
-                    </ul>
+                    </div>
+
                 )}
             </div>
         </div>
