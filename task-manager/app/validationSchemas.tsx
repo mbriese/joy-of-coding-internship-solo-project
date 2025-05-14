@@ -14,7 +14,7 @@ export const createTaskSchema = z.object({
             return { message: ctx.defaultError };
         },
     }),
-    dueDate: z.string().optional(), // 👈 input is string from <input type="date" />
+    dueDate: z.string().optional(),
     priority: z.nativeEnum(Priority),
     importance: z.nativeEnum(Importance),
     completed: z.boolean(),

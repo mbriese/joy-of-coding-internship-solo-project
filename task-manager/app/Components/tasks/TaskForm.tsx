@@ -2,7 +2,9 @@
 
 
 import { Button, Callout, TextField } from '@radix-ui/themes';
-import SimpleMDE from 'react-simplemde-editor';
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
+import {useRouter} from "next/navigation";
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createTaskSchema } from '@/app/validationSchemas';
@@ -11,6 +13,7 @@ import { useState } from 'react';
 import { Status, CategoryType, Priority, Importance } from '@/app/generated/prisma/client';
 import ErrorMessage from '@/app/Components/ErrorMessage';
 import Spinner from '@/app/Components/Spinner';
+import confetti from 'canvas-confetti';
 
 export type TaskFormData = z.infer<typeof createTaskSchema>;
 
@@ -29,7 +32,8 @@ const TaskForm = ({
                       isSubmitting = false,
                       error,
                   }: TaskFormProps) => {
-    const [isSuccess, setSuccess] = useState(false);
+    const [isSuccess, setSuccess] = useState(false)
+    const router = useRouter();
     const {
         title = '',
         description = '',
@@ -63,9 +67,13 @@ const TaskForm = ({
 
     const handleInternalSubmit = handleSubmit(async (data) => {
         setSuccess(false);
-        await onSubmit(data);  // calls the parent-provided function
-        reset();               // ✅ clears the form
-        setSuccess(true);      // ✅ shows success message
+        void onSubmit(data);  // calls the parent-provided function
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
+        router.push('/tasks');
     });
 
 
@@ -151,7 +159,7 @@ const TaskForm = ({
                     variant="outline"
                     color="gray"
                     onClick={() => {
-                        reset();         // ✅ clears the form
+                        reset(initialValues);         // ✅ resets initial values
                         setSuccess(false); // ✅ clears success state too, if needed
                     }}
                 >
