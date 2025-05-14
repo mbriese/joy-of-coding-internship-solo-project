@@ -31,7 +31,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     const formattedDueDate = new Date(task.dueDate).toLocaleDateString();
 
     const priorityColorMap: Record<Priority, string> = {
-        URGENT:  'bg-red-100 text-red-700',
+        URGENT: 'bg-red-100 text-red-700',
         HIGH: 'bg-orange-100 text-orange-700',
         NORMAL: 'bg-yellow-100 text-yellow-800',
         LOW: 'bg-green-100 text-green-700',
@@ -61,7 +61,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     };
 
     return (
-        <div className="bg-white shadow rounded p-4 flex justify-between items-start">
+        <div className="bg-white shadow rounded p-4 space-y-4">
             <div>
                 <h3
                     className={`text-lg font-semibold ${
@@ -70,53 +70,40 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
                 >
                     {task.title}
                 </h3>
+                <p className="text-gray-600 mb-2">{task.description}</p>
 
-                <p className="text-gray-600 mb-1">{task.description}</p>
-
-                <div className="text-sm text-gray-500 space-y-1 mt-2">
+                <div className="text-sm text-gray-500 space-y-1">
                     <div>
                         <strong>Category:</strong>{' '}
-                        <span
-                            className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${categoryColorMap[task.category]}`}
-                        >
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${categoryColorMap[task.category]}`}>
               {task.category}
             </span>
                     </div>
-
                     <div>
                         <strong>Status:</strong>{' '}
-                        <span
-                            className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${statusColorMap[task.status]}`}
-                        >
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${statusColorMap[task.status]}`}>
               {task.status}
             </span>
                     </div>
-
                     <div>
                         <strong>Priority:</strong>{' '}
-                        <span
-                            className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${priorityColorMap[task.priority]}`}
-                        >
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${priorityColorMap[task.priority]}`}>
               {task.priority}
             </span>
                     </div>
-
                     <div>
                         <strong>Importance:</strong>{' '}
-                        <span
-                            className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${importanceColorMap[task.importance]}`}
-                        >
+                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${importanceColorMap[task.importance]}`}>
               {task.importance}
             </span>
                     </div>
-
                     <div>
                         <strong>Due:</strong> {formattedDueDate}
                     </div>
                 </div>
             </div>
 
-            <div className="flex items-start space-x-3 pt-1">
+            <div className="flex items-center space-x-4 border-t pt-3">
                 <Link
                     href={`/tasks/${task.id}/edit`}
                     className="text-blue-500 hover:text-blue-700"
