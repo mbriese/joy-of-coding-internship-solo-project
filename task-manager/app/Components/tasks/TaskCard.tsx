@@ -7,6 +7,7 @@ import {
     CategoryType,
     Status,
     Importance,
+    CompletedType,
 } from '@/app/generated/prisma/client';
 
 type TaskPropsModel = {
@@ -16,7 +17,7 @@ type TaskPropsModel = {
     priority: Priority;
     importance: Importance;
     dueDate: Date;
-    completed: boolean;
+    completed: CompletedType;
     category: CategoryType;
     status: Status;
 };
