@@ -1,9 +1,9 @@
 import {NextRequest, NextResponse} from "next/server";
 import { prisma } from "../../lib/prisma";
-//import {PrismaClient} from "../../generated/prisma/client";
+//import {PrismaClient} from "../../generated/oldprisma/client";
 import {createTaskSchema} from "@/app/validationSchemas";
 
-//const prisma = new PrismaClient()
+//const oldprisma = new PrismaClient()
 //const DEFAULT_USER_ID = 1;
 export async function GET() {
     try {
