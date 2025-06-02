@@ -23,9 +23,10 @@ export const createTaskSchema = z.object({
 
 export const createUserSchema
     = z.object({
-    name: z.string().min(1, 'Name is required').max(255),
+    fname: z.string().min(1, 'First name is required').max(255),
+    lname: z.string().min(1, 'Last name is required').max(255),
     email: z.string().min(1, 'email is required').max(255),
-    details: z.string().min(1, 'Details are required').max(255),
+    description: z.string().min(1, 'Description is required').max(255),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
 });

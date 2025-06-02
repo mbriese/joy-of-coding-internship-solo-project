@@ -1,9 +1,10 @@
 import {NextRequest, NextResponse} from "next/server";
 import { prisma } from "../../lib/prisma";
-//import {PrismaClient} from "../../generated/oldprisma/client";
+import {PrismaClient} from "../../generated/prisma/client";
 import {createTaskSchema} from "@/app/validationSchemas";
 
-//const oldprisma = new PrismaClient()
+//const prisma = new PrismaClient()
+const client = new PrismaClient();
 //const DEFAULT_USER_ID = 1;
 export async function GET() {
     try {
@@ -16,29 +17,27 @@ export async function GET() {
 }
 
 
-export async function POST (request: NextRequest) {
+export async function POST(request: NextRequest) {
     console.log('in task post function');
-    const body = await request.json();
+    const body = await request.json() as Record<string, unknown>;
     console.log(JSON.stringify(body));
     const validation = createTaskSchema.safeParse(body);
     if (!validation.success) {
-        return NextResponse.json(validation.error.errors, {status: 400});
+        return NextResponse.json(validation.error.errors, { status: 400 });
     }
-    const {title, description} = validation.data;
+    const { title, description } = validation.data as { title: string; description: string };
     const updatedAt = new Date();
     const createdAt = new Date();
     const dueDate = new Date();
 
-    // @ts-ignore
-    // @ts-ignore
-    const newTask = await prisma.task.create({
+    const newTask = await client.task.create({
         data: {
             title,
             description,
-            updatedAt: updatedAt || new Date(),
-            createdAt: createdAt || new Date(),
-            dueDate: dueDate || new Date()
-        }
+            updatedAt,
+            createdAt,
+            dueDate,
+        },
     });
-    return NextResponse.json(newTask, {status: 201});
+    return NextResponse.json(newTask, { status: 201 });
 }

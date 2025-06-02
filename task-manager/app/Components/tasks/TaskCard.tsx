@@ -32,17 +32,15 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     const formattedDueDate = new Date(task.dueDate).toLocaleDateString();
 
     const priorityColorMap: Record<Priority, string> = {
-        URGENT: 'bg-red-100 text-red-700',
         HIGH: 'bg-orange-100 text-orange-700',
-        NORMAL: 'bg-yellow-100 text-yellow-800',
+        MEDIUM: 'bg-yellow-100 text-yellow-800',
         LOW: 'bg-green-100 text-green-700',
     };
 
     const importanceColorMap: Record<Importance, string> = {
-        HIGH_IMPORTANCE: 'bg-red-100 text-red-700',
-        IMPORTANT: 'bg-orange-100 text-orange-900',
-        NORMAL: 'bg-yellow-100 text-yellow-800',
-        NOT_IMPORTANT: 'bg-green-100 text-green-700',
+        HIGH: 'bg-orange-100 text-orange-900',
+        MEDIUM: 'bg-yellow-100 text-yellow-800',
+        LOW: 'bg-green-100 text-green-700',
     };
 
     const categoryColorMap: Record<CategoryType, string> = {
