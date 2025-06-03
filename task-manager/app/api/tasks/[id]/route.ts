@@ -39,7 +39,17 @@ export async function DELETE(
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     const taskId = parseInt(params.id);
-    const body = await req.json();
+    const body = await req.json() as {
+        title: string;
+        description: string;
+        status: string;
+        category: string;
+        dueDate: string;
+        priority: string;
+        importance: string;
+        completed: string;
+        userId: number;
+    };
 
     const parsed = createTaskSchema.safeParse(body);
     if (!parsed.success) {
@@ -56,13 +66,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             category: CategoryType[data.category as keyof typeof CategoryType],
             completed: data.completed as CompletedType,
             dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-            // 👇 Convert string to enum using enum object
             status: Status[data.status as keyof typeof Status],
             priority: Priority[data.priority as keyof typeof Priority],
             importance: Importance[data.importance as keyof typeof Importance],
+            userId: data.userId,
         },
     });
 
     return NextResponse.json(updatedTask);
 }
-
