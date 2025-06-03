@@ -15,16 +15,14 @@ type BadgeProps =
 
 const badgeStyles = {
     priority: {
-        URGENT: 'bg-red-700 text-white',
         HIGH: 'bg-red-100 text-red-700',
-        NORMAL: 'bg-yellow-100 text-yellow-800',
+        MEDIUM: 'bg-yellow-100 text-yellow-800',
         LOW: 'bg-green-100 text-green-700',
     },
     importance: {
-        HIGH_IMPORTANCE: 'bg-red-700 text-white',
-        IMPORTANT: 'bg-red-100 text-red-700',
-        NORMAL: 'bg-yellow-100 text-yellow-800',
-        NOT_IMPORTANT: 'bg-gray-100 text-gray-700',
+        HIGH: 'bg-red-100 text-red-700',
+        MEDIUM: 'bg-yellow-100 text-yellow-800',
+        LOW: 'bg-gray-100 text-gray-700',
     },
     category: {
         WORK: 'bg-blue-100 text-blue-700',

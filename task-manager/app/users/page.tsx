@@ -5,8 +5,10 @@ import { Button, Card } from '@radix-ui/themes';
 
 type User = {
     id: number;
-    name: string;
+    fname: string;
+    lname: string;
     email: string;
+    description: string;
 };
 
 const UsersPage = () => {
@@ -42,8 +44,10 @@ const UsersPage = () => {
             <div className="space-y-4">
                 {users.map((user) => (
                     <Card key={user.id} className="p-4">
-                        <div className="text-lg font-medium">{user.name}</div>
+                        <div className="text-lg font-medium">{user.fname}</div>
+                        <div className="text-lg font-medium">{user.lname}</div>
                         <div className="text-gray-600">{user.email}</div>
+                        <div className="text-lg font-medium">{user.description}</div>
                     </Card>
                 ))}
             </div>

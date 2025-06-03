@@ -24,9 +24,10 @@ const UserForm = ({
                       error,
                   }: UserFormProps) => {
     const {
-        name = '',
+        fname ='',
+        lname = '',
         email = '',
-        details = '',
+        description = '',
         createdAt,
         updatedAt,
     } = initialValues;
@@ -38,9 +39,10 @@ const UserForm = ({
     } = useForm<UserFormData>({
         resolver: zodResolver(createUserSchema),
         defaultValues: {
-            name,
+            fname,
+            lname,
             email,
-            details,
+            description,
             createdAt,
             updatedAt,
         },
@@ -55,14 +57,17 @@ const UserForm = ({
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <TextField.Root placeholder="Name" {...register('name')} />
-                <ErrorMessage>{errors.name?.message}</ErrorMessage>
+                <TextField.Root placeholder="First name" {...register('fname')} />
+                <ErrorMessage>{errors.fname?.message}</ErrorMessage>
+
+                <TextField.Root placeholder="Last name" {...register('lname')} />
+                <ErrorMessage>{errors.lname?.message}</ErrorMessage>
 
                 <TextField.Root placeholder="Email" {...register('email')} />
                 <ErrorMessage>{errors.email?.message}</ErrorMessage>
 
-                <TextField.Root placeholder="Details" {...register('details')} />
-                <ErrorMessage>{errors.details?.message}</ErrorMessage>
+                <TextField.Root placeholder="Description" {...register('description')} />
+                <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
                 <Button disabled={isSubmitting}>
                     Submit User {isSubmitting && <Spinner />}

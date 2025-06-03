@@ -1,13 +1,17 @@
-import {NextRequest, NextResponse} from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../lib/prisma";
-//import {PrismaClient} from "../../generated/prisma/client";
-import {createTaskSchema} from "@/app/validationSchemas";
+import { PrismaClient } from "../../generated/prisma/client";
+import { createTaskSchema } from "@/app/validationSchemas";
 
-//const prisma = new PrismaClient()
-//const DEFAULT_USER_ID = 1;
+const client = new PrismaClient();
+
 export async function GET() {
     try {
-        const tasks = await prisma.task.findMany();
+        const tasks = await prisma.task.findMany({
+            include: {
+                user: true,
+            },
+        });
         return NextResponse.json(tasks);
     } catch (err) {
         console.error('Fetch error:', err);
@@ -15,30 +19,37 @@ export async function GET() {
     }
 }
 
-
-export async function POST (request: NextRequest) {
+export async function POST(request: NextRequest) {
     console.log('in task post function');
-    const body = await request.json();
+    const body = await request.json() as {
+        title: string;
+        description: string;
+        userId: number;
+        fname: string;
+        lname: string;
+        email: string;
+        userDescription: string;
+    };
     console.log(JSON.stringify(body));
-    const validation = createTaskSchema.safeParse(body);
-    if (!validation.success) {
-        return NextResponse.json(validation.error.errors, {status: 400});
-    }
-    const {title, description} = validation.data;
-    const updatedAt = new Date();
-    const createdAt = new Date();
-    const dueDate = new Date();
+    const { title, description, userId } = await createTaskSchema.parseAsync(body);
 
-    // @ts-ignore
-    // @ts-ignore
-    const newTask = await prisma.task.create({
+    const newTask = await client.task.create({
         data: {
             title,
             description,
-            updatedAt: updatedAt || new Date(),
-            createdAt: createdAt || new Date(),
-            dueDate: dueDate || new Date()
-        }
+            status: 'OPEN',
+            category: 'OTHER',
+            priority: 'MEDIUM',
+            importance: 'MEDIUM',
+            completed: 'INCOMPLETE',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            dueDate: new Date(),
+            userId,
+        },
+            include: {
+                    user: true,
+                    },
     });
-    return NextResponse.json(newTask, {status: 201});
+    return NextResponse.json(newTask, { status: 201 });
 }

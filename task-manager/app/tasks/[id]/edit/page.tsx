@@ -36,6 +36,7 @@ const EditTaskPage = () => {
                     priority: data.priority,
                     importance: data.importance,
                     completed: data.completed,
+                    userId: data.userId,
                 };
 
                 setTask(transformed);

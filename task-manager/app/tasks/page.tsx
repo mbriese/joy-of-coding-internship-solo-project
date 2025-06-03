@@ -7,7 +7,7 @@ import Link from "next/link";
 
 import { useRouter } from 'next/navigation';
 import TaskCard from '@/app/Components/tasks/TaskCard';
-//import type { task as TaskModel } from '@/app/generated/prisma/client';
+import type { task as TaskModel } from '@/app/generated/prisma/client';
 
 
 // type Task = {
@@ -15,10 +15,10 @@ import TaskCard from '@/app/Components/tasks/TaskCard';
 //     title: string;
 //     description?: string;
 //     status: string;
-//     priority: string;
-//     importance: string;
+//     priority: Priority;
+//     importance: Importance;
 //     dueDate: Date;
-//     completed: boolean;
+//     completed: CompletedType;
 //     category: string;
 // };
 
