@@ -18,6 +18,7 @@ export const createTaskSchema = z.object({
     priority: z.nativeEnum(Priority),
     importance: z.nativeEnum(Importance),
     completed: z.nativeEnum(CompletedType),
+    userId: z.number(),
 });
 
 

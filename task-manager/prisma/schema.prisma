@@ -15,7 +15,7 @@ datasource db {
 }
 
 model task {
-  id          Int           @id @default(autoincrement())
+  taskId      Int           @id @default(autoincrement())
   title       String        @db.VarChar(255)
   description String        @db.Text
   status      Status        @default(OPEN)
@@ -26,6 +26,8 @@ model task {
   updatedAt   DateTime      @updatedAt
   dueDate     DateTime      @default(now())
   completed   CompletedType @default(INCOMPLETE)
+  userId      Int
+  user        user          @relation(fields: [userId], references: [userId])
 }
 
 enum Status {
@@ -62,11 +64,12 @@ enum CompletedType {
 }
 
 model user {
-  id          Int      @id @default(autoincrement())
+  userId      Int      @id @default(autoincrement())
   fname       String   @db.VarChar(255)
   lname       String   @db.VarChar(255)
   email       String   @unique
   description String   @db.VarChar(255)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  tasks       task[]
 }

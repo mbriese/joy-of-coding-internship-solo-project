@@ -8,7 +8,11 @@ const client = new PrismaClient();
 //const DEFAULT_USER_ID = 1;
 export async function GET() {
     try {
-        const tasks = await prisma.task.findMany();
+        const tasks = await prisma.task.findMany({
+            include: {
+                user: true,
+            },
+        });
         return NextResponse.json(tasks);
     } catch (err) {
         console.error('Fetch error:', err);
@@ -25,11 +29,16 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
         return NextResponse.json(validation.error.errors, { status: 400 });
     }
-    const { title, description } = validation.data as { title: string; description: string };
+    const { title, description, userId } = validation.data as {
+        title: string;
+        description: string;
+        userId: number;
+    };
     const updatedAt = new Date();
     const createdAt = new Date();
     const dueDate = new Date();
 
+    // @ts-ignore
     const newTask = await client.task.create({
         data: {
             title,
@@ -37,6 +46,12 @@ export async function POST(request: NextRequest) {
             updatedAt,
             createdAt,
             dueDate,
+            userId,
+            user: {
+                connect: {
+                    userId: userId,
+                },
+            },
         },
     });
     return NextResponse.json(newTask, { status: 201 });
