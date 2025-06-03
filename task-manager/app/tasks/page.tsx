@@ -15,10 +15,10 @@ import type { task as TaskModel } from '@/app/generated/prisma/client';
 //     title: string;
 //     description?: string;
 //     status: string;
-//     priority: string;
-//     importance: string;
+//     priority: Priority;
+//     importance: Importance;
 //     dueDate: Date;
-//     completed: boolean;
+//     completed: CompletedType;
 //     category: string;
 // };
 

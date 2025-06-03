@@ -26,7 +26,7 @@ export const createUserSchema
     fname: z.string().min(1, 'First name is required').max(255),
     lname: z.string().min(1, 'Last name is required').max(255),
     email: z.string().min(1, 'email is required').max(255),
-    description: z.string().min(1, 'Description is required').max(255),
+    description: z.string().min(1, 'optional').max(255).optional(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
 });
