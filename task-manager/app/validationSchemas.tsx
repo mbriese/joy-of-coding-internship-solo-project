@@ -1,5 +1,5 @@
 import {z} from "zod";
-import { Status, Priority, Importance, CategoryType, CompletedType } from '@/app/generated/prisma/client';
+import { Status, Priority, Importance, CategoryType } from '@/app/generated/prisma/client';
 
 
 export const createTaskSchema = z.object({
@@ -17,7 +17,7 @@ export const createTaskSchema = z.object({
     dueDate: z.string().optional(),
     priority: z.nativeEnum(Priority),
     importance: z.nativeEnum(Importance),
-    completed: z.nativeEnum(CompletedType),
+    completed: z.boolean(),
     userId: z.number(),
 });
 

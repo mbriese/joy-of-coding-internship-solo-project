@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma'; // ✅ shared client
-import { CompletedType, CategoryType, Status, Priority, Importance } from '@/app/generated/prisma/client';
+import { CategoryType, Status, Priority, Importance } from '@/app/generated/prisma/client';
 import { createTaskSchema } from '@/app/validationSchemas';
 
 // GET /api/tasks/[id]
@@ -47,7 +47,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         dueDate: string;
         priority: string;
         importance: string;
-        completed: string;
+        completed,
         userId: number;
     };
 
@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             title: data.title,
             description: data.description,
             category: CategoryType[data.category as keyof typeof CategoryType],
-            completed: data.completed as CompletedType,
+            completed: data.completed,
             dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
             status: Status[data.status as keyof typeof Status],
             priority: Priority[data.priority as keyof typeof Priority],

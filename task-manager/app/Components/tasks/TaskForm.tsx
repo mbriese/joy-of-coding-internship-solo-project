@@ -42,7 +42,7 @@ const TaskForm = ({
         dueDate = '',
         priority = undefined,
         importance = undefined,
-        completed = 'INCOMPLETE',
+        completed,
     } = initialValues;
 
     const {

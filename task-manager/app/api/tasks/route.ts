@@ -22,6 +22,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     console.log('in task post function');
     const body = await request.json() as {
+
         title: string;
         description: string;
         userId: number;
@@ -31,17 +32,18 @@ export async function POST(request: NextRequest) {
         userDescription: string;
     };
     console.log(JSON.stringify(body));
-    const { title, description, userId } = await createTaskSchema.parseAsync(body);
+    const { title, description, userId, completed } = await createTaskSchema.parseAsync(body);
 
     const newTask = await client.task.create({
         data: {
+            id,
             title,
             description,
             status: 'OPEN',
             category: 'OTHER',
             priority: 'MEDIUM',
             importance: 'MEDIUM',
-            completed: 'INCOMPLETE',
+            completed,
             createdAt: new Date(),
             updatedAt: new Date(),
             dueDate: new Date(),

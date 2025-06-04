@@ -7,19 +7,21 @@ import {
     CategoryType,
     Status,
     Importance,
-    CompletedType,
 } from '@/app/generated/prisma/client';
 
 type TaskPropsModel = {
-    id: number;
+    taskId: number;
     title: string;
     description: string;
+    status: Status;
+    category: CategoryType;
     priority: Priority;
     importance: Importance;
+    createdAt: Date;
+    updatedAt: Date;
     dueDate: Date;
-    completed: CompletedType;
-    category: CategoryType;
-    status: Status;
+    completed: boolean;
+    userId: number;
 };
 
 type TaskCardProps = {
