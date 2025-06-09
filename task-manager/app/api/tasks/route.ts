@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
 
     const newTask = await client.task.create({
         data: {
-            id,
             title,
             description,
             status: 'OPEN',

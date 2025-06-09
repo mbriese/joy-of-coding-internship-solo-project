@@ -106,7 +106,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
 
             <div className="flex items-center space-x-4 border-t pt-3">
                 <Link
-                    href={`/tasks/${task.id}/edit`}
+                    href={`/tasks/${task.taskId}/edit`}
                     className="text-blue-500 hover:text-blue-700"
                     title="Edit task"
                 >
@@ -114,7 +114,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
                 </Link>
 
                 <button
-                    onClick={() => onComplete(task.id)}
+                    onClick={() => onComplete(task.taskId)}
                     className="text-green-600 hover:text-green-800"
                     title="Mark as complete"
                 >
@@ -122,7 +122,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
                 </button>
 
                 <button
-                    onClick={() => onDelete(task.id)}
+                    onClick={() => onDelete(task.taskId)}
                     className="text-red-600 hover:text-red-800"
                     title="Delete task"
                 >

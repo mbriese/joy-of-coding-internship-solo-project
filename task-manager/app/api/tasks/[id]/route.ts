@@ -10,7 +10,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
         return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
     }
 
-    const task = await prisma.task.findUnique({ where: { id: taskId } });
+    const task = await prisma.task.findUnique({ where: { taskId } });
     if (!task) {
         return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
@@ -30,7 +30,7 @@ export async function DELETE(
     }
 
     await prisma.task.delete({
-        where: { id: numericId },
+        where: { taskId: numericId },
     });
 
     return NextResponse.json({ success: true });
@@ -47,7 +47,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         dueDate: string;
         priority: string;
         importance: string;
-        completed,
+        completed: boolean,
         userId: number;
     };
 
@@ -59,7 +59,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const data = parsed.data;
 
     const updatedTask = await prisma.task.update({
-        where: { id: taskId },
+        where: { taskId },
         data: {
             title: data.title,
             description: data.description,

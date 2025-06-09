@@ -15,8 +15,7 @@ datasource db {
 }
 
 model task {
-  id          Int          @id
-  taskId      Int          @unique @default(autoincrement())
+  taskId      Int          @id @unique @default(autoincrement())
   title       String       @db.VarChar(255)
   description String       @db.Text
   status      Status       @default(OPEN)
@@ -60,8 +59,7 @@ enum CategoryType {
 }
 
 model user {
-  id          Int      @id
-  userId      Int      @unique @default(autoincrement())
+  userId      Int      @id @unique @default(autoincrement())
   fname       String   @db.VarChar(255)
   lname       String   @db.VarChar(255)
   email       String   @unique
