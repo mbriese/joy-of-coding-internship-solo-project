@@ -43,7 +43,7 @@ const UsersPage = () => {
 
             <div className="space-y-4">
                 {users.map((user) => (
-                    <Card key={user.id} className="p-4">
+                    <Card key={`${user.fname}-${user.lname}`} className="p-4">
                         <div className="text-lg font-medium">{user.fname}</div>
                         <div className="text-lg font-medium">{user.lname}</div>
                         <div className="text-gray-600">{user.email}</div>

@@ -15,24 +15,25 @@ datasource db {
 }
 
 model task {
-  taskId      Int           @id @default(autoincrement())
-  title       String        @db.VarChar(255)
-  description String        @db.Text
-  status      Status        @default(OPEN)
-  category    CategoryType  @default(OTHER)
-  priority    Priority      @default(MEDIUM)
-  importance  Importance    @default(MEDIUM)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  dueDate     DateTime      @default(now())
-  completed   CompletedType @default(INCOMPLETE)
+  taskId      Int          @id @unique @default(autoincrement())
+  title       String       @db.VarChar(255)
+  description String       @db.Text
+  status      Status       @default(OPEN)
+  category    CategoryType @default(OTHER)
+  priority    Priority     @default(MEDIUM)
+  importance  Importance   @default(MEDIUM)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  dueDate     DateTime     @default(now())
   userId      Int
-  user        user          @relation(fields: [userId], references: [userId])
+  user        user         @relation(fields: [userId], references: [userId])
 }
 
 enum Status {
   OPEN
   IN_PROGRESS
+  INCOMPLETE
+  COMPLETED
   CLOSED
 }
 
@@ -40,6 +41,7 @@ enum Priority {
   LOW
   MEDIUM
   HIGH
+  URGENT
 }
 
 enum Importance {
@@ -58,13 +60,8 @@ enum CategoryType {
   OTHER
 }
 
-enum CompletedType {
-  INCOMPLETE
-  COMPLETE
-}
-
 model user {
-  userId      Int      @id @default(autoincrement())
+  userId      Int      @id @unique @default(autoincrement())
   fname       String   @db.VarChar(255)
   lname       String   @db.VarChar(255)
   email       String   @unique

@@ -7,19 +7,20 @@ import {
     CategoryType,
     Status,
     Importance,
-    CompletedType,
 } from '@/app/generated/prisma/client';
 
 type TaskPropsModel = {
-    id: number;
+    taskId: number;
     title: string;
     description: string;
+    status: Status;
+    category: CategoryType;
     priority: Priority;
     importance: Importance;
+    createdAt: Date;
+    updatedAt: Date;
     dueDate: Date;
-    completed: CompletedType;
-    category: CategoryType;
-    status: Status;
+    userId: number;
 };
 
 type TaskCardProps = {
@@ -32,6 +33,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     const formattedDueDate = new Date(task.dueDate).toLocaleDateString();
 
     const priorityColorMap: Record<Priority, string> = {
+        URGENT: 'bg-red-100 text-black-700',
         HIGH: 'bg-orange-100 text-orange-700',
         MEDIUM: 'bg-yellow-100 text-yellow-800',
         LOW: 'bg-green-100 text-green-700',
@@ -56,6 +58,8 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     const statusColorMap: Record<Status, string> = {
         OPEN: 'bg-gray-100 text-gray-700',
         IN_PROGRESS: 'bg-yellow-100 text-yellow-800',
+        COMPLETED: 'bg-green-100 text-green-700',
+        INCOMPLETE: 'bg-green-100 text-green-700',
         CLOSED: 'bg-green-100 text-green-800',
     };
 
@@ -64,7 +68,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
             <div>
                 <h3
                     className={`text-lg font-semibold ${
-                        task.completed ? 'line-through text-gray-400' : ''
+                        task.status ? 'text-gray-400' : ''
                     }`}
                 >
                     {task.title}
@@ -104,7 +108,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
 
             <div className="flex items-center space-x-4 border-t pt-3">
                 <Link
-                    href={`/tasks/${task.id}/edit`}
+                    href={`/tasks/${task.taskId}/edit`}
                     className="text-blue-500 hover:text-blue-700"
                     title="Edit task"
                 >
@@ -112,7 +116,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
                 </Link>
 
                 <button
-                    onClick={() => onComplete(task.id)}
+                    onClick={() => onComplete(task.taskId)}
                     className="text-green-600 hover:text-green-800"
                     title="Mark as complete"
                 >
@@ -120,7 +124,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
                 </button>
 
                 <button
-                    onClick={() => onDelete(task.id)}
+                    onClick={() => onDelete(task.taskId)}
                     className="text-red-600 hover:text-red-800"
                     title="Delete task"
                 >
