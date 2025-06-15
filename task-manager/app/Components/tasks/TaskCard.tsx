@@ -20,7 +20,6 @@ type TaskPropsModel = {
     createdAt: Date;
     updatedAt: Date;
     dueDate: Date;
-    completed: boolean;
     userId: number;
 };
 
@@ -34,6 +33,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     const formattedDueDate = new Date(task.dueDate).toLocaleDateString();
 
     const priorityColorMap: Record<Priority, string> = {
+        URGENT: 'bg-red-100 text-black-700',
         HIGH: 'bg-orange-100 text-orange-700',
         MEDIUM: 'bg-yellow-100 text-yellow-800',
         LOW: 'bg-green-100 text-green-700',
@@ -58,6 +58,8 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     const statusColorMap: Record<Status, string> = {
         OPEN: 'bg-gray-100 text-gray-700',
         IN_PROGRESS: 'bg-yellow-100 text-yellow-800',
+        COMPLETED: 'bg-green-100 text-green-700',
+        INCOMPLETE: 'bg-green-100 text-green-700',
         CLOSED: 'bg-green-100 text-green-800',
     };
 
@@ -66,7 +68,7 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
             <div>
                 <h3
                     className={`text-lg font-semibold ${
-                        task.completed ? 'line-through text-gray-400' : ''
+                        task.status ? 'text-gray-400' : ''
                     }`}
                 >
                     {task.title}

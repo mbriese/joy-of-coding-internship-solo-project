@@ -11,12 +11,14 @@ const NewTasksPage = () => {
     const [isSubmitting, setSubmitting] = useState(false);
 
     const handleCreate = async (data: TaskFormData) => {
+        console.log("🟢 handleCreate called with:", data);
         try {
             setSubmitting(true);
-            await axios.post('/api/tasks', data);
+            console.log('🧪 Submitting data to API:', data); // Add this!
+            await axios.post('/api/tasks', data); // This should work now
             router.push('/tasks');
-        } catch (err) {
-            console.error(err);
+        } catch (err: any) {
+            console.error('❌ Axios error:', err?.response?.data || err.message);
             setError('An unexpected error occurred.');
             setSubmitting(false);
         }

@@ -1,40 +1,48 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../lib/prisma";
-import { PrismaClient } from "../../generated/prisma/client";
-import { createTaskSchema } from "@/app/validationSchemas";
+import {NextRequest, NextResponse} from "next/server";
+import {PrismaClient} from "../../generated/prisma/client"
+import {createTaskSchema} from "@/app/validationSchemas";
 
-const client = new PrismaClient();
+const prisma = new PrismaClient();
 
-export async function GET() {
-    try {
-        const tasks = await prisma.task.findMany({
-            include: {
-                user: true,
-            },
-        });
-        return NextResponse.json(tasks);
-    } catch (err) {
-        console.error('Fetch error:', err);
-        return NextResponse.json({ error: 'Error fetching tasks' }, { status: 500 });
-    }
+//const prisma = new PrismaClient()
+//const DEFAULT_USER_ID = 1;
+const userId =1;
+
+export async function GET(request: NextRequest) {
+    const tasks = await prisma.task.findMany({
+        where: { userId: 1 }, // ✅ default user
+        orderBy: { dueDate: 'asc' }, // (Optional) better ordering
+    });
+    return NextResponse.json(tasks);
 }
 
+
 export async function POST(request: NextRequest) {
-    console.log('in task post function');
-    const body = await request.json() as {
+    console.log('in the task post function');
 
-        title: string;
-        description: string;
-        userId: number;
-        fname: string;
-        lname: string;
-        email: string;
-        userDescription: string;
-    };
+    const body = await request.json();
     console.log(JSON.stringify(body));
-    const { title, description, userId, completed } = await createTaskSchema.parseAsync(body);
+    const validation = createTaskSchema.safeParse(body);
+    if (!validation.success) {
+        console.log('validation failed: ', validation.error.format());
+        return NextResponse.json(validation.error.format(), {status: 400});
+    }
 
-    const newTask = await client.task.create({
+    const {
+        title,
+        description,
+        status,
+        category,
+        dueDate,
+        priority,
+        importance,
+    } = validation.data;
+
+    const createdAt = new Date();
+    const updatedAt = new Date();
+    const dueDateObj = new Date(dueDate ?? Date.now());
+
+    const newTask = await prisma.task.create({
         data: {
             title,
             description,
@@ -42,15 +50,11 @@ export async function POST(request: NextRequest) {
             category: 'OTHER',
             priority: 'MEDIUM',
             importance: 'MEDIUM',
-            completed,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            dueDate: new Date(),
-            userId,
+            updatedAt: updatedAt || new Date(),
+            createdAt: createdAt || new Date(),
+            dueDate: dueDateObj,
+            userId: 1,
         },
-            include: {
-                    user: true,
-                    },
     });
-    return NextResponse.json(newTask, { status: 201 });
+    return NextResponse.json(newTask, { status: 201} );
 }

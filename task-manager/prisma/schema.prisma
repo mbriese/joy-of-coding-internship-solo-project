@@ -25,7 +25,6 @@ model task {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   dueDate     DateTime     @default(now())
-  completed   Boolean      @default(false)
   userId      Int
   user        user         @relation(fields: [userId], references: [userId])
 }
@@ -33,6 +32,8 @@ model task {
 enum Status {
   OPEN
   IN_PROGRESS
+  INCOMPLETE
+  COMPLETED
   CLOSED
 }
 
@@ -40,6 +41,7 @@ enum Priority {
   LOW
   MEDIUM
   HIGH
+  URGENT
 }
 
 enum Importance {

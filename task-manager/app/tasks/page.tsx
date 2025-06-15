@@ -7,20 +7,8 @@ import Link from "next/link";
 
 import { useRouter } from 'next/navigation';
 import TaskCard from '@/app/Components/tasks/TaskCard';
-import type { task as TaskModel } from '@/app/generated/prisma/client';
+//import type { task as TaskModel } from '@/app/generated/prisma/client';
 
-
-// type Task = {
-//     id: number;
-//     title: string;
-//     description?: string;
-//     status: string;
-//     priority: Priority;
-//     importance: Importance;
-//     dueDate: Date;
-//     completed: CompletedType;
-//     category: string;
-// };
 
 const TasksPage = () => {
     const [tasks, setTasks] = useState<PrismaTask[]>([]);
@@ -28,7 +16,7 @@ const TasksPage = () => {
     const router = useRouter();
 
     useEffect(() => {
-        void (async function fetchTasks() {
+        const fetchTasks = async () => {
             try {
                 const res = await fetch('/api/tasks');
                 const data = await res.json();
@@ -38,8 +26,10 @@ const TasksPage = () => {
             } finally {
                 setLoading(false);
             }
-        })();
-    }, []);
+        };
+
+        void fetchTasks(); // invokes the async function
+    }, [])
 
     const handleDelete = async (id: number) => {
         if (!confirm('Are you sure you want to delete this task?')) return;
