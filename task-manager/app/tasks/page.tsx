@@ -1,44 +1,61 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-import type { task as PrismaTask } from '@/app/generated/prisma/client';
-import {Button } from '@radix-ui/themes';
+import type {task as PrismaTask} from '@/app/generated/prisma/client';
+import {Button} from '@radix-ui/themes';
 import Link from "next/link";
-
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import TaskCard from '@/app/Components/tasks/TaskCard';
-//import type { task as TaskModel } from '@/app/generated/prisma/client';
-
 
 const TasksPage = () => {
     const [tasks, setTasks] = useState<PrismaTask[]>([]);
+    const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const pageSize = 10;
+    const totalPages = Math.ceil(total / pageSize);
     const router = useRouter();
+    const [filters, setFilters] = useState({
+        status: '',
+        category: '',
+        sortBy: 'dueDate',
+        sortOrder: 'asc',
+        page: 1,
+        pageSize: 10
+    });
+
 
     useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const res = await fetch('/api/tasks');
-                const data = await res.json();
-                setTasks(data);
-            } catch (err) {
-                console.error('Failed to fetch tasks:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
+        const queryParams = new URLSearchParams({
+            sortBy: filters.sortBy,
+            sortOrder: filters.sortOrder,
+            page: filters.page.toString(),
+            pageSize: filters.pageSize.toString(),
+        });
 
-        void fetchTasks(); // invokes the async function
-    }, [])
+        if (filters.status) queryParams.set("status", filters.status);
+        if (filters.category) queryParams.set("category", filters.category);
+
+        setLoading(true);
+        fetch(`/api/tasks?${queryParams.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                setTasks(data.tasks);
+                setTotal(data.total);
+            })
+            .catch(console.error)
+            .finally(() => setLoading(false));
+    }, [filters]);
+
 
     const handleDelete = async (id: number) => {
         if (!confirm('Are you sure you want to delete this task?')) return;
-        await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
-        router.refresh(); // ✅ revalidate data
+        await fetch(`/api/tasks/${id}`, {method: 'DELETE'});
+        router.refresh();
     };
 
     const handleComplete = async (id: number) => {
-        await fetch(`/api/tasks/${id}/complete`, { method: 'PATCH' });
+        await fetch(`/api/tasks/${id}/complete`, {method: 'PATCH'});
         router.refresh();
     };
 
@@ -50,28 +67,79 @@ const TasksPage = () => {
                 </Button>
             </div>
 
-            <div>
-                <h1 className="text-2xl font-bold">📋 My Tasks</h1>
+            <h1 className="text-2xl font-bold">📋 My Tasks</h1>
 
-                {loading ? (
-                    <p>Loading tasks...</p>
-                ) : tasks.length === 0 ? (
-                    <p>No tasks found.</p>
-                ) : (
-                    <div className="space-y-4">
-                        {tasks.map((task) => (
-                            <TaskCard
-                                key={task.taskId}
-                                task={task}
-                                onDelete={handleDelete}
-                                onComplete={handleComplete}
-                            />
-                        ))}
-                    </div>
+            {/* ✅ Filter/Sort Controls */}
+            <div className="flex flex-wrap gap-4 items-center my-4">
+                <select
+                    value={filters.sortBy}
+                    onChange={(e) => setFilters(prev => ({...prev, sortBy: e.target.value}))}
+                    className="p-2 border rounded"
+                >
+                    <option value="createdAt">Created At</option>
+                    <option value="dueDate">Due Date</option>
+                    <option value="priority">Priority</option>
+                </select>
 
-                )}
+                <select
+                    value={filters.sortOrder}
+                    onChange={(e) => setFilters(prev => ({...prev, sortOrder: e.target.value}))}
+                    className="p-2 border rounded"
+                >
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+
+                <select
+                    value={filters.status}
+                    onChange={(e) => setFilters(prev => ({...prev, status: e.target.value}))}
+                    className="p-2 border rounded"
+                >
+                    <option value="">All Statuses</option>
+                    <option value="OPEN">Open</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
             </div>
+
+            {/* 🧾 Task List Section */}
+            {loading ? (
+                <p>Loading tasks...</p>
+            ) : tasks.length === 0 ? (
+                <p>No tasks found.</p>
+            ) : (
+                <div className="space-y-4">
+                    {tasks.map((task) => (
+                        <TaskCard
+                            key={task.taskId}
+                            task={task}
+                            onDelete={handleDelete}
+                            onComplete={handleComplete}
+                        />
+                    ))}
+                </div>
+
+            )}
+            <div className="flex justify-center items-center gap-4 mt-4">
+                <Button
+                    disabled={filters.page <= 1}
+                    onClick={() => setFilters(prev => ({...prev, page: prev.page - 1}))}
+                >
+                    Previous
+                </Button>
+                <span>
+        Page {filters.page} of {Math.ceil(total / filters.pageSize)}
+    </span>
+                <Button
+                    disabled={filters.page >= Math.ceil(total / filters.pageSize)}
+                    onClick={() => setFilters(prev => ({...prev, page: prev.page + 1}))}
+                >
+                    Next
+                </Button>
+            </div>
+
         </div>
+
     );
 };
 

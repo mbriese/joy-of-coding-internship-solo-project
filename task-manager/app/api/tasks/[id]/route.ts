@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/app/lib/prisma'; // ✅ shared client
+import { prisma } from '@/app/lib/prisma';
 import { CategoryType, Status, Priority, Importance } from '@/app/generated/prisma/client';
 import { createTaskSchema } from '@/app/validationSchemas';
 
-// GET /api/tasks/[id]
-export async function GET(request: NextRequest & {params: {id: string} } ) {
-    const { id } = request.params;
-    const taskId = parseInt(id as string);
+// ✅ GET /api/tasks/[id]
+export async function GET(
+    _request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    const taskId = parseInt(params.id, 10);
     if (isNaN(taskId)) {
         return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
     }
@@ -19,34 +21,33 @@ export async function GET(request: NextRequest & {params: {id: string} } ) {
     return NextResponse.json(task);
 }
 
-export async function DELETE(request: NextRequest & {params: {id: string} }) {
-    const { id } = request.params;
-    const numericId = parseInt(id as string, 10);
-    if (isNaN(numericId)) {
+// ✅ DELETE /api/tasks/[id]
+export async function DELETE(
+    _request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    const taskId = parseInt(params.id, 10);
+    if (isNaN(taskId)) {
         return NextResponse.json({ error: 'Invalid task ID' }, { status: 400 });
     }
 
-    await prisma.task.delete({
-        where: { taskId: numericId },
-    });
-
+    await prisma.task.delete({ where: { taskId } });
     return NextResponse.json({ success: true });
 }
 
+// ✅ PATCH /api/tasks/[id]
+export async function PATCH(
 
-export async function PATCH(req: NextRequest & { params: { id: string } })  {
-    const { id } = req.params;
-    const taskId = parseInt(id);
-    const body = await req.json() as {
-        title: string;
-        description: string;
-        status: string;
-        category: string;
-        dueDate: string;
-        priority: string;
-        importance: string;
-        userId: number;
-    };
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    const taskId = parseInt(params.id, 10);
+    if (isNaN(taskId)) {
+        return NextResponse.json({ error: 'Invalid task ID' }, { status: 400 });
+    }
+
+    const body = await request.json();
+    console.log('🎯 PATCH /api/tasks/[id] body:', body);
 
     const parsed = createTaskSchema.safeParse(body);
     if (!parsed.success) {

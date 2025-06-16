@@ -1,60 +1,69 @@
-import {NextRequest, NextResponse} from "next/server";
-import {PrismaClient} from "../../generated/prisma/client"
-import {createTaskSchema} from "@/app/validationSchemas";
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "../../generated/prisma/client";
+import { Status, CategoryType } from "@/app/generated/prisma/client";
+import { createTaskSchema } from "@/app/validationSchemas";
 
 const prisma = new PrismaClient();
-
-//const prisma = new PrismaClient()
-//const DEFAULT_USER_ID = 1;
-const userId =1;
+const DEFAULT_USER_ID = 1;
 
 export async function GET(request: NextRequest) {
-    const tasks = await prisma.task.findMany({
-        where: { userId: 1 }, // ✅ default user
-        orderBy: { dueDate: 'asc' }, // (Optional) better ordering
-    });
-    return NextResponse.json(tasks);
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status") || undefined;
+    const category = searchParams.get("category") || undefined;
+
+    const validSortBy = ["dueDate", "createdAt", "priority"] as const;
+    const sortByParam = searchParams.get("sortBy");
+    const sortBy = validSortBy.includes(sortByParam as any) ? sortByParam! : "dueDate";
+    const sortOrder = searchParams.get("sortOrder") === "desc" ? "desc" : "asc";
+
+    const page = Math.max(parseInt(searchParams.get("page") || "1", 10), 1);
+    const pageSize = Math.min(Math.max(parseInt(searchParams.get("pageSize") || "10", 10), 1), 50);
+    const skip = (page - 1) * pageSize;
+
+    const where = {
+        userId: DEFAULT_USER_ID,
+        ...(status && { status: status as Status }),
+        ...(category && { category: category as CategoryType }),
+    };
+
+    const [total, tasks] = await prisma.$transaction([
+        prisma.task.count({ where }),
+        prisma.task.findMany({
+            where,
+            skip,
+            take: pageSize,
+            orderBy: { [sortBy]: sortOrder },
+        }),
+    ]);
+
+    return NextResponse.json({ total, tasks });
 }
 
-
 export async function POST(request: NextRequest) {
-    console.log('in the task post function');
-
     const body = await request.json();
-    console.log(JSON.stringify(body));
     const validation = createTaskSchema.safeParse(body);
+
     if (!validation.success) {
-        console.log('validation failed: ', validation.error.format());
-        return NextResponse.json(validation.error.format(), {status: 400});
+        console.log("❌ Validation failed:", validation.error.format());
+        return NextResponse.json(validation.error.format(), { status: 400 });
     }
 
-    const {
-        title,
-        description,
-        status,
-        category,
-        dueDate,
-        priority,
-        importance,
-    } = validation.data;
+    const { title, description, status, category, dueDate, priority, importance } = validation.data;
 
-    const createdAt = new Date();
-    const updatedAt = new Date();
     const dueDateObj = new Date(dueDate ?? Date.now());
 
     const newTask = await prisma.task.create({
         data: {
             title,
             description,
-            status: 'OPEN',
-            category: 'OTHER',
-            priority: 'MEDIUM',
-            importance: 'MEDIUM',
-            updatedAt: updatedAt || new Date(),
-            createdAt: createdAt || new Date(),
+            status,
+            category,
+            priority,
+            importance,
             dueDate: dueDateObj,
-            userId: 1,
+            userId: DEFAULT_USER_ID,
         },
     });
-    return NextResponse.json(newTask, { status: 201} );
+
+    return NextResponse.json(newTask, { status: 201 });
 }
