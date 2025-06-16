@@ -17,7 +17,7 @@ export const createTaskSchema = z.object({
     dueDate: z.string().optional(),
     priority: z.nativeEnum(Priority),
     importance: z.nativeEnum(Importance),
-    userId: z.number(),
+    userId: z.preprocess((val) => Number(val), z.number()),
 });
 
 

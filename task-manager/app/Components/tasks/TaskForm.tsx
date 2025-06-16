@@ -36,6 +36,9 @@
                       }: TaskFormProps) => {
         const [isClient, setIsClient] = useState<boolean>(false)
         const [isSuccess, setSuccess] = useState(false)
+        type UserOption = { userId: number; fname: string; lname: string };
+        const [users, setUsers] = useState<UserOption[]>([]);
+
         const router = useRouter();
         const {
             title = '',
@@ -63,18 +66,22 @@
                 dueDate,
                 priority,
                 importance,
+                userId: initialValues.userId ?? 1,
             },
         });
 
         useEffect(() => {
             setIsClient(true);
+            fetch('/api/users')
+                .then(res => res.json())
+                .then(setUsers)
+                .catch(err => console.error("❌ Failed to load users:", err));
         }, []);
+
 
         const handleInternalSubmit = handleSubmit(
             async (data) => {
-                console.log('✅ Form submit handler triggered');
-                console.log("🟢 TaskForm submission data:", data);
-                void onSubmit(data);
+                void onSubmit(data as TaskFormData);
                 confetti({
                     particleCount: 100,
                     spread: 70,
@@ -166,6 +173,20 @@
                         </select>
                     </div>
                     <ErrorMessage>{errors.importance?.message}</ErrorMessage>
+
+                    <div className="space-y-2">
+                        <label htmlFor="userId">Assign to User</label>
+                        <select {...register('userId')} className="w-full p-2 border rounded">
+                            <option value="">-- Select a user --</option>
+                            {users.map((user) => (
+                                <option key={user.userId} value={user.userId}>
+                                    {user.fname} {user.lname}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <ErrorMessage>{errors.userId?.message}</ErrorMessage>
+
 
                     <div className="space-y-2">
                         {/* ✅ Correct: This ensures the form is actually submitted */}
