@@ -66,8 +66,10 @@ export async function PATCH(
             status: Status[data.status as keyof typeof Status],
             priority: Priority[data.priority as keyof typeof Priority],
             importance: Importance[data.importance as keyof typeof Importance],
+            userId: data.userId, // ✅ Add this line
         },
     });
+
 
     return NextResponse.json(updatedTask);
 }
