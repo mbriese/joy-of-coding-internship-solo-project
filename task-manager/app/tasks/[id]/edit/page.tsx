@@ -54,7 +54,7 @@ const EditTaskPage = () => {
         try {
             setSubmitting(true);
             const res = await fetch(`/api/tasks/${id}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
