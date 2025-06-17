@@ -2,6 +2,7 @@
 
 
     import {Button, Callout, TextField} from '@radix-ui/themes';
+
     import dynamic from 'next/dynamic';
     const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
         ssr: false,
@@ -17,7 +18,7 @@
     import {Status, CategoryType, Priority, Importance} from '@/app/generated/prisma/client';
     import ErrorMessage from '@/app/Components/ErrorMessage';
     import Spinner from '@/app/Components/Spinner';
-    import confetti from 'canvas-confetti';
+
 
     export type TaskFormData = z.infer<typeof createTaskSchema>;
 
@@ -36,6 +37,9 @@
                       }: TaskFormProps) => {
         const [isClient, setIsClient] = useState<boolean>(false)
         const [isSuccess, setSuccess] = useState(false)
+        type UserOption = { userId: number; fname: string; lname: string };
+        const [users, setUsers] = useState<UserOption[]>([]);
+
         const router = useRouter();
         const {
             title = '',
@@ -63,29 +67,35 @@
                 dueDate,
                 priority,
                 importance,
+                userId: initialValues.userId ?? 1,
             },
         });
 
         useEffect(() => {
             setIsClient(true);
+            fetch('/api/users')
+                .then(res => res.json())
+                .then(setUsers)
+                .catch(err => console.error("❌ Failed to load users:", err));
         }, []);
+
 
         const handleInternalSubmit = handleSubmit(
             async (data) => {
-                console.log('✅ Form submit handler triggered');
-                console.log("🟢 TaskForm submission data:", data);
-                void onSubmit(data);
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                });
+                const correctedData: TaskFormData = {
+                    ...data,
+                    userId: Number(data.userId), // 👈 Coerce string to number
+                };
+                void onSubmit(correctedData);
+                //confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 router.push('/tasks');
             },
             (errors) => {
                 console.log('❌ Validation failed:', errors);
             }
         );
+
+
 
 
 
@@ -168,6 +178,20 @@
                     <ErrorMessage>{errors.importance?.message}</ErrorMessage>
 
                     <div className="space-y-2">
+                        <label htmlFor="userId">Assign to User</label>
+                        <select {...register('userId')} className="w-full p-2 border rounded">
+                            <option value="">-- Select a user --</option>
+                            {users.map((user) => (
+                                <option key={user.userId} value={String(user.userId)}>
+                                    {user.fname} {user.lname}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <ErrorMessage>{errors.userId?.message}</ErrorMessage>
+
+
+                    <div className="space-y-2">
                         {/* ✅ Correct: This ensures the form is actually submitted */}
                         <Button type="submit"  disabled={isSubmitting} onClick={() => console.log('🖱️ clicked submit')}>
                             Submit Task {isSubmitting && <Spinner/>}
@@ -188,5 +212,4 @@
             </div>
         );
     };
-
     export default TaskForm;

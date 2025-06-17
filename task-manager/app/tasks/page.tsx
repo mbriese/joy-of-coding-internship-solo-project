@@ -6,6 +6,9 @@ import {Button} from '@radix-ui/themes';
 import Link from "next/link";
 import {useRouter} from 'next/navigation';
 import TaskCard from '@/app/Components/tasks/TaskCard';
+import BubblePopTaskCard from '@/app/Components/animations/BubblePopTaskCard';
+import confetti from "canvas-confetti";
+
 
 const TasksPage = () => {
     const [tasks, setTasks] = useState<PrismaTask[]>([]);
@@ -15,6 +18,7 @@ const TasksPage = () => {
     const pageSize = 10;
     const totalPages = Math.ceil(total / pageSize);
     const router = useRouter();
+    const [visibleTasks, setVisibleTasks] = useState<Record<number, boolean>>({});
     const [filters, setFilters] = useState({
         status: '',
         category: '',
@@ -42,6 +46,14 @@ const TasksPage = () => {
             .then(data => {
                 setTasks(data.tasks);
                 setTotal(data.total);
+
+                // Initialize all as visible
+                const newVisibility: Record<number, boolean> = {};
+                // @ts-ignore
+                data.tasks.forEach(task => {
+                    newVisibility[task.taskId] = true;
+                });
+                setVisibleTasks(newVisibility);
             })
             .catch(console.error)
             .finally(() => setLoading(false));
@@ -50,14 +62,46 @@ const TasksPage = () => {
 
     const handleDelete = async (id: number) => {
         if (!confirm('Are you sure you want to delete this task?')) return;
-        await fetch(`/api/tasks/${id}`, {method: 'DELETE'});
-        router.refresh();
+
+        // Step 1: trigger exit animation
+        setVisibleTasks(prev => ({ ...prev, [id]: false }));
+
+        // Step 2: wait for animation to finish (e.g., 300ms)
+        setTimeout(async () => {
+            await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+
+            // Step 3: remove from list
+            setTasks(prev => prev.filter(task => task.taskId !== id));
+            setVisibleTasks(prev => {
+                const updated = { ...prev };
+                delete updated[id];
+                return updated;
+            });
+        }, 300); // match the framer-motion exit duration
     };
 
+
     const handleComplete = async (id: number) => {
-        await fetch(`/api/tasks/${id}/complete`, {method: 'PATCH'});
-        router.refresh();
+        const res = await fetch(`/api/tasks/${id}/complete`, { method: 'PATCH' });
+
+        if (res.ok) {
+            const updated = await res.json();
+            setTasks(prev =>
+                prev.map(task =>
+                    task.taskId === id ? updated : task
+                )
+            );
+            // 🎉 Trigger confetti animation
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+            });
+        } else {
+            console.error('❌ Failed to complete task');
+        }
     };
+
 
     return (
         <div className="p-6 space-y-6">
@@ -110,12 +154,13 @@ const TasksPage = () => {
             ) : (
                 <div className="space-y-4">
                     {tasks.map((task) => (
-                        <TaskCard
-                            key={task.taskId}
-                            task={task}
-                            onDelete={handleDelete}
-                            onComplete={handleComplete}
-                        />
+                        <BubblePopTaskCard key={task.taskId} isVisible={visibleTasks[task.taskId]}>
+                            <TaskCard
+                                task={task}
+                                onDelete={handleDelete}
+                                onComplete={handleComplete}
+                            />
+                        </BubblePopTaskCard>
                     ))}
                 </div>
 
