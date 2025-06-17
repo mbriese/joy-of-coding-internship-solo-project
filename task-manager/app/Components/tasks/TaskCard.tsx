@@ -1,6 +1,7 @@
 'use client';
 
 import { Pencil, Trash2, CheckCircle } from 'lucide-react';
+import { motion } from "framer-motion";
 import Link from 'next/link';
 import {
     Priority,
@@ -64,7 +65,13 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
     };
 
     return (
-        <div className="bg-white shadow rounded p-4 space-y-4">
+        <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="bg-white shadow rounded p-4 space-y-4"
+        >
+
             <div>
                 <h3
                     className={`text-lg font-semibold ${
@@ -131,7 +138,8 @@ const TaskCard = ({ task, onDelete, onComplete }: TaskCardProps) => {
                     <Trash2 size={18} />
                 </button>
             </div>
-        </div>
+
+        </motion.div>
     );
 };
 

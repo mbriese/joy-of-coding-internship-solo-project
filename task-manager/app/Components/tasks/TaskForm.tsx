@@ -2,6 +2,7 @@
 
 
     import {Button, Callout, TextField} from '@radix-ui/themes';
+
     import dynamic from 'next/dynamic';
     const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
         ssr: false,
@@ -17,7 +18,7 @@
     import {Status, CategoryType, Priority, Importance} from '@/app/generated/prisma/client';
     import ErrorMessage from '@/app/Components/ErrorMessage';
     import Spinner from '@/app/Components/Spinner';
-    import confetti from 'canvas-confetti';
+    //import confetti from 'canvas-confetti';
 
     export type TaskFormData = z.infer<typeof createTaskSchema>;
 
@@ -81,18 +82,20 @@
 
         const handleInternalSubmit = handleSubmit(
             async (data) => {
-                void onSubmit(data as TaskFormData);
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                });
+                const correctedData: TaskFormData = {
+                    ...data,
+                    userId: Number(data.userId), // 👈 Coerce string to number
+                };
+                void onSubmit(correctedData);
+                //confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 router.push('/tasks');
             },
             (errors) => {
                 console.log('❌ Validation failed:', errors);
             }
         );
+
+
 
 
 
@@ -179,7 +182,7 @@
                         <select {...register('userId')} className="w-full p-2 border rounded">
                             <option value="">-- Select a user --</option>
                             {users.map((user) => (
-                                <option key={user.userId} value={user.userId}>
+                                <option key={user.userId} value={String(user.userId)}>
                                     {user.fname} {user.lname}
                                 </option>
                             ))}
@@ -209,5 +212,4 @@
             </div>
         );
     };
-
     export default TaskForm;

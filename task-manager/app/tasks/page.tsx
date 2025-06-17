@@ -6,6 +6,7 @@ import {Button} from '@radix-ui/themes';
 import Link from "next/link";
 import {useRouter} from 'next/navigation';
 import TaskCard from '@/app/Components/tasks/TaskCard';
+import BubblePopTaskCard from '@/app/Components/animations/BubblePopTaskCard';
 
 const TasksPage = () => {
     const [tasks, setTasks] = useState<PrismaTask[]>([]);
@@ -50,14 +51,30 @@ const TasksPage = () => {
 
     const handleDelete = async (id: number) => {
         if (!confirm('Are you sure you want to delete this task?')) return;
-        await fetch(`/api/tasks/${id}`, {method: 'DELETE'});
-        router.refresh();
+        const res = await fetch(`/api/tasks/${id}`, {method: 'DELETE'});
+        if (res.ok) {
+            setTasks(prev => prev.filter(task => task.taskId !== id));
+            setTotal(prev => prev - 1);
+        } else {
+            console.error('❌ Failed to delete task');
+        }
     };
 
     const handleComplete = async (id: number) => {
-        await fetch(`/api/tasks/${id}/complete`, {method: 'PATCH'});
-        router.refresh();
+        const res = await fetch(`/api/tasks/${id}/complete`, { method: 'PATCH' });
+
+        if (res.ok) {
+            const updated = await res.json();
+            setTasks(prev =>
+                prev.map(task =>
+                    task.taskId === id ? updated : task
+                )
+            );
+        } else {
+            console.error('❌ Failed to complete task');
+        }
     };
+
 
     return (
         <div className="p-6 space-y-6">
@@ -110,12 +127,13 @@ const TasksPage = () => {
             ) : (
                 <div className="space-y-4">
                     {tasks.map((task) => (
-                        <TaskCard
-                            key={task.taskId}
-                            task={task}
-                            onDelete={handleDelete}
-                            onComplete={handleComplete}
-                        />
+                        <BubblePopTaskCard key={task.taskId} isVisible={true}>
+                            <TaskCard
+                                task={task}
+                                onDelete={handleDelete}
+                                onComplete={handleComplete}
+                            />
+                        </BubblePopTaskCard>
                     ))}
                 </div>
 
