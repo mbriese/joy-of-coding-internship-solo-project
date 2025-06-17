@@ -2,12 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+
 import classnames from "classnames";
-import { usePathname } from "next/navigation";
+import {useRouter, usePathname } from "next/navigation";
 import type { task as PrismaTask } from "@/app/generated/prisma/client";
+import { CheckCircle, Pencil, Trash2 } from "lucide-react";
+import confetti from "canvas-confetti";
 
 const Dashboard = () => {
     const currentPath = usePathname();
+    const router = useRouter();
     const [topTasks, setTopTasks] = useState<PrismaTask[]>([]);
 
     const links = [
@@ -17,6 +21,9 @@ const Dashboard = () => {
     ];
 
     useEffect(() => {
+        fetchTopTasks();
+    }, []);
+
         const fetchTopTasks = async () => {
             try {
                 const res = await fetch(
@@ -29,8 +36,24 @@ const Dashboard = () => {
             }
         };
 
-        void fetchTopTasks();
-    }, []);
+    const handleDelete = async (id: number) => {
+        if (!confirm('Are you sure you want to delete this task?')) return;
+        await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        setTopTasks(prev => prev.filter(t => t.taskId !== id));
+    };
+
+    const handleComplete = async (id: number) => {
+        const res = await fetch(`/api/tasks/${id}/complete`, { method: 'PATCH' });
+        if (res.ok) {
+            const updated = await res.json();
+            setTopTasks(prev =>
+                prev.map(t => (t.taskId === id ? updated : t)).filter(t => t.status !== 'COMPLETED')
+            );
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        } else {
+            console.error('❌ Failed to complete task');
+        }
+    };
 
     return (
         <>
@@ -70,6 +93,17 @@ const Dashboard = () => {
                                 <p className="font-bold">{task.title}</p>
                                 <p className="text-sm text-gray-600">{task.description}</p>
                                 <p className="text-xs italic">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
+                                <div className="flex gap-3 pt-2">
+                                    <Link href={`/tasks/${task.taskId}/edit`} title="Edit">
+                                        <Pencil className="text-blue-600 hover:text-blue-800" size={18} />
+                                    </Link>
+                                    <button onClick={() => handleComplete(task.taskId)} title="Complete">
+                                        <CheckCircle className="text-green-600 hover:text-green-800" size={18} />
+                                    </button>
+                                    <button onClick={() => handleDelete(task.taskId)} title="Delete">
+                                        <Trash2 className="text-red-600 hover:text-red-800" size={18} />
+                                    </button>
+                                </div>
                             </li>
                         ))}
                     </ul>

@@ -18,7 +18,7 @@
     import {Status, CategoryType, Priority, Importance} from '@/app/generated/prisma/client';
     import ErrorMessage from '@/app/Components/ErrorMessage';
     import Spinner from '@/app/Components/Spinner';
-    //import confetti from 'canvas-confetti';
+
 
     export type TaskFormData = z.infer<typeof createTaskSchema>;
 
